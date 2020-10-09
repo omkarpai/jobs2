@@ -1,0 +1,12 @@
+<div>
+    <button {{action 'postToDb'}}>Post to db and create record</button>
+</div>
+
+<section>
+{{#each @model as |post|}}
+<div>
+  <div>{{post.title}}</div>
+  <div>{{post.body}}</div>
+</div>
+{{/each}}
+</section>
