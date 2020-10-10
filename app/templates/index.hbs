@@ -1,12 +1,11 @@
 <div>
-    <button {{action 'postToDb'}}>Post to db and create record</button>
+    <button {{action 'postToDb'}}>Create job</button>
 </div>
 
 <section>
-{{#each @model as |post|}}
+{{#each @model as |job|}}
 <div>
-  <div>{{post.title}}</div>
-  <div>{{post.body}}</div>
+  <div>{{job.startOn}}</div>
 </div>
 {{/each}}
 </section>
