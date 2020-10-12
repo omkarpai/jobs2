@@ -1,15 +1,17 @@
-<select onchange={{action "setSelection" value="target.value"}}>
+<select {{ on  "change" (fn this.setMonth value="target.value")}}>
  <option disabled selected> -- Month -- </option>
-    <option value="January">January</option>
-    <option value="February">February</option>
-    <option value="March">March</option>
-    <option value="April">April</option>
-    <option value="May">May</option>
-    <option value="June">June</option>
-    <option value="July">July</option>
-    <option value="August">August</option>
-    <option value="September">September</option>
-    <option value="October">October</option>
-    <option value="November">November</option>
-    <option value="December">December</option>
+    {{#each months as |month| }}
+    <option value={{month}}>{{month}}</option>
+    {{/each}}
 </select>
+
+<select {{ on  "change" (fn this.setYear value="target.value")}}>
+ <option disabled selected> -- Year -- </option>
+    {{#each years as |year| }}
+    <option value={{year}}>{{year}}</option>
+    {{/each}}
+</select>
+
+
+<div>{{this.month}}</div>
+<div>{{this.year}}</div>
