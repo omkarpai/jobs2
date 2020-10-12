@@ -2,7 +2,10 @@
     <button {{action 'postToDb'}}>Create job</button>
 </div>
 
+{{drop-down action 'wasChanged'}}
+
 <section>
+
 {{#each @model as |job|}}
 <div>
   <div>{{job.startOn}}</div>
