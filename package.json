@@ -58,5 +58,8 @@
   },
   "ember": {
     "edition": "octane"
+  },
+  "dependencies": {
+    "moment": "^2.29.1"
   }
 }
