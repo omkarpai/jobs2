@@ -1,6 +1,6 @@
 import Component from '@ember/component';
 import {tracked} from '@glimmer/tracking';
-import {action} from '@ember/object';
+
 
 import moment from 'moment';
 
@@ -22,7 +22,6 @@ didReceiveAttrs(){
         newMoment.year(this.year);
         this.nomDays = newMoment.daysInMonth();
 
-        console.log(this.nomDays);
         for(let i=1 ; i<=this.nomDays; i++)
         {
             this.days[i-1] = i;
@@ -30,10 +29,6 @@ didReceiveAttrs(){
     }
 }
 
-@action showDays(){
-    console.log(this.nomDays);
-    console.log(this.days);
-}
 
 }
     

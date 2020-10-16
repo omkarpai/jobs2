@@ -4,6 +4,8 @@ import Model,{ attr } from '@ember-data/model';
 //     username: attr('string'),
 // }
 
-export default Model.extend({
-    startOn: attr('string'),
-  });
+export default class IndexModel extends Model {
+  @attr('string') startOn;
+}
+    
+  
