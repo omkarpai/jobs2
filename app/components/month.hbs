@@ -4,4 +4,16 @@ Values passed in from drop-down compoenet --}}
 
 {{@year}} --}} 
 
-<button {{on "click" this.showDays }}>clickmeboi</button>
+
+
+<div class="days" >
+{{#each days as |day|}}
+    <div class="day" id="{{day}}-{{@month}}-{{@year}}">
+        
+        {{day}} - {{@month}} - {{@year}}  
+        <Job @day={{day}} @month={{@month}} @year={{@year}}></Job>
+    </div>
+{{/each}}
+</div>
+
+
