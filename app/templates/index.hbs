@@ -1,9 +1,26 @@
+<select {{ on  "change" (fn this.setMonth value="target.value")}}>
+ <option disabled selected> -- Month -- </option>
+    {{#each months as |month| }}
+    <option value={{month}}>{{month}}</option>
+    {{/each}}
+</select>
+
+<select {{ on  "change" (fn this.setYear value="target.value")}}>
+ <option disabled selected> -- Year -- </option>
+    {{#each years as |year| }}
+    <option value={{year}}>{{year}}</option>
+    {{/each}}
+</select>
+
 <div>
     <button {{action 'postToDb'}}>Create job</button>
 </div>
 
-<DropDown></DropDown>
+<div>
+    <button {{action 'showId'}}>Show ids</button>
+</div>
 
+<Month @month={{this.month}} @year={{this.year}}></Month>
 
 
 {{#each @model as |job|}}
@@ -11,3 +28,4 @@
   <div>{{job.startOn}}</div>
 </div>
 {{/each}}
+
