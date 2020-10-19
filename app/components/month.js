@@ -2,6 +2,7 @@ import Component from '@ember/component';
 import {tracked} from '@glimmer/tracking';
 
 
+
 import moment from 'moment';
 
 export default class MonthComponent extends Component{
@@ -28,6 +29,8 @@ didReceiveAttrs(){
         }
     }
 }
+
+
 
 
 }

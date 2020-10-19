@@ -11,7 +11,7 @@ export default class DropDownComponent extends Component{
     months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
     years = ['2021','2020','2019'];
 
-    @action setMonth(selectedValue){
+    @action setMonth(selectedValue){ 
       this.month = selectedValue.originalTarget.value;
     }
 

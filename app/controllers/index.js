@@ -11,7 +11,7 @@ export default class IndexController extends Controller{
 
     @action postToDb (){
         let newRecord = this.store.createRecord('index',{
-            startOn: '10-01-2000',
+            startOn: '2-Jan-2020',
         });
         newRecord.save();
     }
@@ -22,20 +22,27 @@ export default class IndexController extends Controller{
         {
             this.store.findRecord('index',modelContent[i]._id).then(
                 (value)=>{
-                    this.dateArray[i]= value.get('startOn');
+                    this.dateArray[i]= {startOn:value.get('startOn'),
+                                        id:modelContent[i]._id
+                                        };
                 }
             )
         }
-        console.log(this.dateArray);
+        
     }
 
     @action setMonth(selectedValue){
         this.month = selectedValue.originalTarget.value;
+        this.send('generateDate');
       }
   
     @action setYear(selectedValue){
         this.year = selectedValue.originalTarget.value;
         this.send('generateDate');
+    }
+
+    @action actionReciever(argument){
+        console.log(argument);
     }
 }
 

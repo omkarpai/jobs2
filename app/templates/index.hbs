@@ -20,12 +20,5 @@
     <button {{action 'showId'}}>Show ids</button>
 </div>
 
-<Month @month={{this.month}} @year={{this.year}}></Month>
-
-
-{{#each @model as |job|}}
-<div>
-  <div>{{job.startOn}}</div>
-</div>
-{{/each}}
+<Month @month={{this.month}} @year={{this.year}} @dateArray={{this.dateArray}} @actionReciever={{this.actionReciever}}></Month>
 

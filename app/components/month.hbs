@@ -1,15 +1,10 @@
-{{!-- {{@jobDates}}
-{{@month}}
-{{@year}} --}}
-
-
 
 <div class="days" >
 {{#each days as |day|}}
     <div class="day" id="{{day}}-{{@month}}-{{@year}}">
         
         {{day}} - {{@month}} - {{@year}}  
-        <Job @day={{day}} @month={{@month}} @year={{@year}}></Job>
+        <Job @day={{day}} @month={{@month}} @year={{@year}} @dateArray={{@dateArray}} @sendToController={{@actionReciever}}></Job>
     </div>
 {{/each}}
 </div>

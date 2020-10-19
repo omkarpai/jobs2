@@ -1,9 +1,7 @@
-<button {{on "click" this.postToDb}}>Add job</button> 
+<button {{on "click" (fn @sendToController "arguments from job")}}>Add job</button> 
 
-from inside job component {{@day}}-{{@month}}-{{@year}}
 
-{{#each @model as |job|}}
-<div>
-  <div>{{job.startOn}}</div>
-</div>
+
+{{#each jobsForThisDay as |job|}}
+    <div>{{job}}</div>
 {{/each}}
