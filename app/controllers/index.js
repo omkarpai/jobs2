@@ -3,32 +3,45 @@ import {tracked} from '@glimmer/tracking';
 import {action} from '@ember/object';
 
 export default class IndexController extends Controller{
-    dateArray =[];
+    @tracked dateArray=[];
     @tracked month= null;
     @tracked year= null;
+
     months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
     years = ['2021','2020','2019'];
 
-    @action postToDb (){
+    @action postToDb (startDate,jobTitle){
+        
         let newRecord = this.store.createRecord('index',{
-            startOn: '2-Jan-2020',
+            startOn: startDate,
+            jobTitle: jobTitle
         });
-        newRecord.save();
+        
+        newRecord.save().then(
+            ()=>{
+                this.send('generateDate');
+            }
+        )
     }
 
     @action generateDate (){
         let modelContent = this.get('model.content');
+        console.log(modelContent);
         for (let i=0; i< modelContent.length ; i++)
         {
-            this.store.findRecord('index',modelContent[i]._id).then(
-                (value)=>{
-                    this.dateArray[i]= {startOn:value.get('startOn'),
-                                        id:modelContent[i]._id
-                                        };
-                }
-            )
+            // this.store.findRecord('index',modelContent[i]._id).then(
+            //     (value)=>{
+            //         this.dateArray[i]= {startOn:value.get('startOn'),
+            //                             id:modelContent[i]._id
+            //                             };
+            //     }
+            // )
+            let req = this.store.peekRecord('index',modelContent[i]._id);
+            this.dateArray[i]= {startOn: req.get('startOn'),
+                                id:modelContent[i]._id
+            }
         }
-        
+        this.send('setDateArray',this.dateArray);
     }
 
     @action setMonth(selectedValue){
@@ -41,8 +54,8 @@ export default class IndexController extends Controller{
         this.send('generateDate');
     }
 
-    @action actionReciever(argument){
-        console.log(argument);
+    @action setDateArray(dateArray){
+        this.dateArray = dateArray;
     }
 }
 

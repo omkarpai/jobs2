@@ -8,9 +8,9 @@ export default class JobComponent extends Component {
     day = null;
     month = null;
     year = null;
-    dateArray= null;
+    @tracked dateArray;
     dateString=null;
-    @tracked jobsForThisDay=[];
+    @tracked jobsForThisDay;
 
     didReceiveAttrs(){
         this.jobsForThisDay=[];

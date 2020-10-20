@@ -1,5 +1,8 @@
-<button {{on "click" (fn @sendToController "arguments from job")}}>Add job</button> 
-
+<div>
+    {{input value=newJobEntry}}
+    <button {{on "click" (fn @sendToController this.dateString newJobEntry)}}>Add job</button> 
+</div>
+ 
 
 
 {{#each jobsForThisDay as |job|}}

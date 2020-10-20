@@ -12,13 +12,7 @@
     {{/each}}
 </select>
 
-<div>
-    <button {{action 'postToDb'}}>Create job</button>
-</div>
 
-<div>
-    <button {{action 'showId'}}>Show ids</button>
-</div>
 
-<Month @month={{this.month}} @year={{this.year}} @dateArray={{this.dateArray}} @actionReciever={{this.actionReciever}}></Month>
+<Month @month={{this.month}} @year={{this.year}} @dateArray={{this.dateArray}} @postToDb={{this.postToDb}}></Month>
 

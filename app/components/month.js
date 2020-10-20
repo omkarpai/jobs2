@@ -6,10 +6,11 @@ import {tracked} from '@glimmer/tracking';
 import moment from 'moment';
 
 export default class MonthComponent extends Component{
-@tracked nomDays = null;
-@tracked month=null;
-@tracked year=null;
+ nomDays = null;
+ month=null;
+ year=null;
 @tracked days = [];
+
 
 didReceiveAttrs(){
     this.month= this.get('month');
