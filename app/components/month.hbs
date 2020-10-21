@@ -1,8 +1,9 @@
 
 <div class="days" >
 {{#each days as |day|}}
-    <div class="day" id="{{day}}-{{@month}}-{{@year}}">
+    <div class="day">
         
+        <button {{on "click" (fn @postNewSkip day @month @year)}}>Skip</button> 
         {{day}} - {{@month}} - {{@year}}  
         <Job 
             @day={{day}} 

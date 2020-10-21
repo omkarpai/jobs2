@@ -2,7 +2,10 @@ import Route from '@ember/routing/route';
 
 export default class IndexRoute extends Route{
     async model(){
-        return this.store.findAll('index');
+        return {
+            job: this.store.findAll('index'),
+            skipped: this.store.findAll('skipped')
+        }
     }
  
 }

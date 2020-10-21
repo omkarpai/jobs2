@@ -7,7 +7,7 @@ export default class IndexController extends Controller{
     @tracked dateArray=[];
     @tracked month= null;
     @tracked year= null;
-    @tracked modelContent;
+    @tracked skippedArray=[];
 
     months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
     years = ['2021','2020','2019'];
@@ -26,10 +26,45 @@ export default class IndexController extends Controller{
         )
     }
 
+    @action postNewSkip (day,month,year){
+        
+        let skippedDate = day + "-" + month + "-" + year;
+        let skipFound = false;
+       
+        for(let i=0 ; i<this.skippedArray.length ; i++)
+        {  
+            if (skippedDate === this.skippedArray[i].skippedDate)
+            {
+                skipFound = true;
+                let req = this.store.peekRecord('skipped',this.skippedArray[i].id);
+                this.store.deleteRecord(req);
+                req.save().then(
+                    ()=>{
+                        this.send('generateDate');
+                        }
+                )
+                
+            }
+        }
+
+        if (skipFound === false)
+        {
+            let newRecord = this.store.createRecord('skipped',{
+                skippedDate: skippedDate
+            });
+            
+            newRecord.save().then(
+                ()=>{
+                    this.send('generateDate');
+                }
+            )
+        }
+    }
+
     @action generateDate (){
-        this.modelContent = this.get('model.content');
+        let modelContent = this.get('model.job.content.content');
         this.dateArray=[];
-        for (let i=0; i< this.modelContent.length ; i++)
+        for (let i=0; i< modelContent.length ; i++)
         {
             // this.store.findRecord('index',this.modelContent[i]._id).then(
             //     (value)=>{
@@ -39,13 +74,24 @@ export default class IndexController extends Controller{
             //                             };
             //     }
             // )
-            let req = this.store.peekRecord('index',this.modelContent[i]._id);
+            let req = this.store.peekRecord('index',modelContent[i]._id);
             this.dateArray[i]= {startOn: req.get('startOn'),
                                 jobTitle: req.get('jobTitle'),
-                                id:this.modelContent[i]._id
+                                id:modelContent[i]._id
             }
         }
         this.send('setDateArray',this.dateArray);
+
+        modelContent = this.get('model.skipped.content.content');
+        this.skippedArray=[];
+        for (let i=0; i< modelContent.length ; i++)
+        {
+            let req = this.store.peekRecord('skipped',modelContent[i]._id);
+            this.skippedArray[i]= {skippedDate: req.get('skippedDate'),
+                                   id:modelContent[i]._id
+            }
+        }
+        this.send('setSkippedArray',this.skippedArray);
     }
 
     @action setMonth(selectedValue){
@@ -60,6 +106,10 @@ export default class IndexController extends Controller{
 
     @action setDateArray(dateArray){
         this.dateArray = dateArray;  
+    }
+
+    @action setSkippedArray(skippedArray){
+        this.skippedArray = skippedArray;  
     }
 
     @action deleteFromDb (id){
