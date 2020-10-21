@@ -1,10 +1,20 @@
+{{this.dayOfTheWeek}}
+
 <div>
     {{input value=newJobEntry}}
-    <button {{on "click" (fn @sendToController this.dateString newJobEntry)}}>Add job</button> 
+    <button {{on "click" this.testing}} {{on "click" (fn @postToDb this.dateString newJobEntry)}}>+</button> 
 </div>
  
 
 
 {{#each jobsForThisDay as |job|}}
-    <div>{{job}}</div>
+<div class="job">
+    <div>{{job.jobTitle}}</div>
+    <button {{on "click" (fn @moveJob job.id "0" job.startOn)}}>L</button>
+
+    <button {{on "click" (fn @deleteFromDb job.id)}}>-</button>
+    
+    <button {{on "click" (fn @moveJob job.id "1" job.startOn)}}>R</button>
+</div>
+    
 {{/each}}
