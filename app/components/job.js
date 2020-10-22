@@ -15,6 +15,7 @@ export default class JobComponent extends Component {
     @tracked jobsForThisDay;
 
     didReceiveAttrs(){
+        //Get properties passed in
         this.jobsForThisDay=[];
         this.day = this.get('day');
         this.month = this.get('month');
@@ -25,6 +26,7 @@ export default class JobComponent extends Component {
         let thisMoment = moment(this.dateString,'D-MMM-YYYY');
         this.dayOfTheWeek = thisMoment.format('dddd');
         
+        //Loop to iterate over entire array of job dates to find which jobs belong to this day.
         let j=0;
         for(let i=0 ; i<this.dateArray.length ; i++)
         {  
@@ -42,7 +44,7 @@ export default class JobComponent extends Component {
     }
 
     @action testing(){
-        console.log("second click was registered");
+        console.log("One click 2 actions");
     }
 
 

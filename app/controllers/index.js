@@ -9,8 +9,8 @@ export default class IndexController extends Controller{
     @tracked year= null;
     @tracked skippedArray=[];
 
-    months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-    years = ['2021','2020','2019'];
+    months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']; //List of months for dropdown
+    years = ['2024','2023','2022','2021','2020','2019'];    //List of years for dropdown
 
     @action postToDb (startDate,jobTitle){
         
@@ -27,7 +27,8 @@ export default class IndexController extends Controller{
     }
 
     @action postNewSkip (day,month,year){
-        
+        //Action to find if given day is already skipped. 
+        //If already skipped delete the record to unskip it. Otherwise create a new skip record
         let skippedDate = day + "-" + month + "-" + year;
         let skipFound = false;
        
@@ -43,7 +44,7 @@ export default class IndexController extends Controller{
                         this.send('generateDate');
                         }
                 )
-                
+                break;
             }
         }
 
@@ -62,8 +63,10 @@ export default class IndexController extends Controller{
     }
 
     @action generateDate (){
+        //Model hook from index.js route returns an object {job , skipped} which contains info about jobs and Dates of every skip
+
         let modelContent = this.get('model.job.content.content');
-        this.dateArray=[];
+        this.dateArray=[];  
         for (let i=0; i< modelContent.length ; i++)
         {
             // this.store.findRecord('index',this.modelContent[i]._id).then(
@@ -81,6 +84,7 @@ export default class IndexController extends Controller{
             }
         }
         this.send('setDateArray',this.dateArray);
+        //I think for Ember to trigger re render , a tracked variable needs to be changed by an action.
 
         modelContent = this.get('model.skipped.content.content');
         this.skippedArray=[];
@@ -123,6 +127,7 @@ export default class IndexController extends Controller{
     //                 )
     //             }
     //         )
+    //ID to be deleted will be passed from click in <Job> component.
         let req = this.store.peekRecord('index',id);
         this.store.deleteRecord(req);
         req.save().then(
@@ -138,6 +143,7 @@ export default class IndexController extends Controller{
         let thisMoment = moment(startOn,"D-MMM-YYYY");
         let matchFound = true;
 
+        //Direction 1 for right move , Direction 0 for left move , depending on click in <Job> component.
         if (direction === "1")
         {   
             if (this.skippedArray.length === 0)
@@ -145,8 +151,12 @@ export default class IndexController extends Controller{
                 thisMoment = thisMoment.add(1,'day');
             }
             else{
+                //Check if day after being moved lands on a skipped day
+                //If yes, keep adding or subtracting till job doesnt land on a skipped day.
                 while (matchFound === true){
                     thisMoment = thisMoment.add(1,'day');
+                    //Iterating over array of skipped dates to find any match.
+                    //You want to keep iterating over skipped array till no match is found.
                     for (let i=0 ; i<this.skippedArray.length ; i++){
                         
                         if (thisMoment.format('D-MMM-YYYY') === this.skippedArray[i].skippedDate){
@@ -183,7 +193,7 @@ export default class IndexController extends Controller{
 
             }
         }
-
+        //To update property for any record just assign that record a new value
         req.startOn = thisMoment.format('D-MMM-YYYY');
         req.save().then(
             ()=>{
