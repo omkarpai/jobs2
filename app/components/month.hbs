@@ -1,12 +1,12 @@
 
 <div class="days" >
 {{#each days as |day|}}
-    <div class="day">
+    <div class={{if day.isSkipped "day-red" "day"}}>
         
-        <button {{on "click" (fn @postNewSkip day @month @year)}}>Skip</button> 
-        {{day}} - {{@month}} - {{@year}}  
+        <button {{on "click" (fn @postNewSkip day.dayOfMonth @month @year)}}>Skip</button> 
+        {{day.dayOfMonth}} - {{@month}} - {{@year}}  
         <Job 
-            @day={{day}} 
+            @day={{day.dayOfMonth}} 
             @month={{@month}} 
             @year={{@year}} 
             @dateArray={{@dateArray}} 

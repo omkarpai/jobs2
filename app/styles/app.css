@@ -1,6 +1,13 @@
 .day {
-    min-width: 200px;
-    border: 1px solid goldenrod;
+    min-width: 300px;
+    background-color: #e6ede6;
+    margin: 3px;
+    text-align: center;
+}
+
+.day-red {
+    min-width: 300px;
+    background-color: tomato;
     margin: 3px;
     text-align: center;
 }
@@ -11,6 +18,8 @@
 }
 
 .job {
-    border: 2px solid black;
-    margin: 2px;
+    
+    margin: 10px;
+    min-height: 50px;
+    background-color: #f7f7f7;
 }

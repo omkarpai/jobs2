@@ -136,14 +136,39 @@ export default class IndexController extends Controller{
     @action moveJob(id,direction,startOn){
         let req = this.store.peekRecord('index',id);
         let thisMoment = moment(startOn,"D-MMM-YYYY");
+        let matchFound = true;
+
         if (direction === "1")
-        {
-            thisMoment.add(1,'day');
+        {   
+            while (matchFound === true){
+                thisMoment = thisMoment.add(1,'day');
+                for (let i=0 ; i<this.skippedArray.length ; i++){
+                    
+                    if (thisMoment.format('D-MMM-YYYY') === this.skippedArray[i].skippedDate){
+                        matchFound = true;
+                        break;
+                    }
+                    else
+                        matchFound = false;
+                }
+            } 
         }
         else
         {
-            thisMoment.subtract(1,'day');
+            while (matchFound === true){
+                thisMoment = thisMoment.subtract(1,'day');
+                for (let i=0 ; i<this.skippedArray.length ; i++){
+    
+                    if (thisMoment.format('D-MMM-YYYY') === this.skippedArray[i].skippedDate){
+                        matchFound = true;
+                        break;
+                    }
+                    else
+                        matchFound = false;
+                }
+            } 
         }
+
         req.startOn = thisMoment.format('D-MMM-YYYY');
         req.save().then(
             ()=>{
