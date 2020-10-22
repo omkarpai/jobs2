@@ -4,7 +4,7 @@
 
 
 <div>
-    {{input value=newJobEntry}}
+    {{input placeholder="Title of job to add" value=newJobEntry}}
     <button {{on "click" this.testing}} {{on "click" (fn @postToDb this.dateString newJobEntry)}}>+</button> 
 </div>
  
@@ -12,7 +12,9 @@
 
 {{#each jobsForThisDay as |job|}}
 <div class="job">
+
     <div class="jobTitle">{{job.jobTitle}}</div>
+    
     <div class = "jobControls">
         <button {{on "click" (fn @moveJob job.id "0" job.startOn)}}> &larr;</button>
         
