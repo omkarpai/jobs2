@@ -1,4 +1,7 @@
+<div class="weekDay">
 {{this.dayOfTheWeek}}
+</div>
+
 
 <div>
     {{input value=newJobEntry}}
@@ -9,12 +12,15 @@
 
 {{#each jobsForThisDay as |job|}}
 <div class="job">
-    <div>{{job.jobTitle}}</div>
-    <button {{on "click" (fn @moveJob job.id "0" job.startOn)}}>L</button>
-
-    <button {{on "click" (fn @deleteFromDb job.id)}}>-</button>
+    <div class="jobTitle">{{job.jobTitle}}</div>
+    <div class = "jobControls">
+        <button {{on "click" (fn @moveJob job.id "0" job.startOn)}}> &larr;</button>
+        
+        <button {{on "click" (fn @deleteFromDb job.id)}}>Del</button>
     
-    <button {{on "click" (fn @moveJob job.id "1" job.startOn)}}>R</button>
+        <button {{on "click" (fn @moveJob job.id "1" job.startOn)}}> &rarr; </button>
+    </div>
+    
 </div>
     
 {{/each}}

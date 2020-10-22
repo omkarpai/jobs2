@@ -2,9 +2,21 @@
 <div class="days" >
 {{#each days as |day|}}
     <div class={{if day.isSkipped "day-red" "day"}}>
+        <div>
+            <button class="skipButton" {{on "click" (fn @postNewSkip day.dayOfMonth @month @year)}}>
+                {{#if day.isSkipped}}
+                Dont skip
+                {{else}}
+                Skip
+                {{/if}}
+            </button> 
+        </div>
         
-        <button {{on "click" (fn @postNewSkip day.dayOfMonth @month @year)}}>Skip</button> 
-        {{day.dayOfMonth}} - {{@month}} - {{@year}}  
+
+        <div class="dayProps">
+            {{day.dayOfMonth}} - {{@month}} - {{@year}} 
+        </div>
+         
         <Job 
             @day={{day.dayOfMonth}} 
             @month={{@month}} 

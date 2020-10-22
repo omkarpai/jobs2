@@ -1,25 +1,58 @@
+@import url('https://fonts.googleapis.com/css2?family=Fjalla+One&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=News+Cycle&display=swap');
+
 .day {
     min-width: 300px;
     background-color: #e6ede6;
-    margin: 3px;
+    padding: 5px;
+    margin: 5px;
     text-align: center;
 }
 
 .day-red {
     min-width: 300px;
     background-color: tomato;
-    margin: 3px;
+    padding: 5px;
+    margin: 5px;
     text-align: center;
 }
 
 .days {
     display: flex;
-    flex-direction: row;
+    
 }
 
 .job {
-    
     margin: 10px;
     min-height: 50px;
     background-color: #f7f7f7;
+    font-family: 'News Cycle', sans-serif;
 }
+
+.jobControls {
+   padding: 10px;
+   font-size: large;
+}
+
+select{
+    margin: 10px;
+}
+
+.dayProps {
+    display: flex;
+    justify-content: center;
+    font-size: large;
+    font-family: 'Fjalla One', sans-serif;
+}
+
+.weekDay{
+    margin: 2px;
+    font-family: 'News Cycle', sans-serif;
+}
+
+.skipButton{
+    margin: 5px;
+}
+
+
+

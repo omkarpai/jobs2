@@ -140,33 +140,48 @@ export default class IndexController extends Controller{
 
         if (direction === "1")
         {   
-            while (matchFound === true){
+            if (this.skippedArray.length === 0)
+            {
                 thisMoment = thisMoment.add(1,'day');
-                for (let i=0 ; i<this.skippedArray.length ; i++){
-                    
-                    if (thisMoment.format('D-MMM-YYYY') === this.skippedArray[i].skippedDate){
-                        matchFound = true;
-                        break;
+            }
+            else{
+                while (matchFound === true){
+                    thisMoment = thisMoment.add(1,'day');
+                    for (let i=0 ; i<this.skippedArray.length ; i++){
+                        
+                        if (thisMoment.format('D-MMM-YYYY') === this.skippedArray[i].skippedDate){
+                            matchFound = true;
+                            break;
+                        }
+                        else
+                            matchFound = false;
                     }
-                    else
-                        matchFound = false;
-                }
-            } 
+                } 
+
+            }
+            
         }
         else
         {
-            while (matchFound === true){
+            if (this.skippedArray.length === 0)
+            {
                 thisMoment = thisMoment.subtract(1,'day');
-                for (let i=0 ; i<this.skippedArray.length ; i++){
-    
-                    if (thisMoment.format('D-MMM-YYYY') === this.skippedArray[i].skippedDate){
-                        matchFound = true;
-                        break;
+            }
+            else{
+                while (matchFound === true){
+                    thisMoment = thisMoment.subtract(1,'day');
+                    for (let i=0 ; i<this.skippedArray.length ; i++){
+                        
+                        if (thisMoment.format('D-MMM-YYYY') === this.skippedArray[i].skippedDate){
+                            matchFound = true;
+                            break;
+                        }
+                        else
+                            matchFound = false;
                     }
-                    else
-                        matchFound = false;
-                }
-            } 
+                } 
+
+            }
         }
 
         req.startOn = thisMoment.format('D-MMM-YYYY');
