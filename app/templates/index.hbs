@@ -1,11 +1,11 @@
-<select {{ on  "change" (fn this.setMonth value="target.value")}}>  
+<select {{ on  "change" this.setMonth}} >  
  <option disabled selected> -- Month -- </option>
     {{#each months as |month| }}
     <option value={{month}}>{{month}}</option>
     {{/each}}
 </select>
 
-<select {{ on  "change" (fn this.setYear value="target.value")}}>   
+<select {{ on  "change" this.setYear}}>   
  <option disabled selected> -- Year -- </option>
     {{#each years as |year| }}
     <option value={{year}}>{{year}}</option>

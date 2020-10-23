@@ -3,6 +3,7 @@
 
 .day {
     min-width: 300px;
+    min-height: 300px;
     background-color: #e6ede6;
     padding: 5px;
     margin: 5px;

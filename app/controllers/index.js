@@ -99,12 +99,12 @@ export default class IndexController extends Controller{
     }
 
     @action setMonth(selectedValue){
-        this.month = selectedValue.originalTarget.value;
+        this.month = selectedValue.target.value;
         this.send('generateDate');
       }
   
     @action setYear(selectedValue){
-        this.year = selectedValue.originalTarget.value;
+        this.year = selectedValue.target.value;
         this.send('generateDate');
     }
 

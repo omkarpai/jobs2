@@ -22,6 +22,7 @@ didReceiveAttrs(){
 
     if (this.month && this.year !== null)
         {
+        console.log(this.year,this.month);
         let newMoment = moment();
         newMoment.month(this.month);
         newMoment.year(this.year);
