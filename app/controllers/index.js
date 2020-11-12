@@ -8,6 +8,7 @@ export default class IndexController extends Controller{
     @tracked month= null;
     @tracked year= null;
     @tracked skippedArray=[];
+    @tracked numberOfJobs= null;
 
     months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']; //List of months for dropdown
     years = ['2024','2023','2022','2021','2020','2019'];    //List of years for dropdown
@@ -24,6 +25,7 @@ export default class IndexController extends Controller{
                 this.send('generateDate');
             }
         )
+        
     }
 
     @action postNewSkip (day,month,year){
@@ -83,7 +85,7 @@ export default class IndexController extends Controller{
                                 id:modelContent[i]._id
             }
         }
-        this.send('setDateArray',this.dateArray);
+        // this.send('setDateArray',this.dateArray);
         //I think for Ember to trigger re render , a tracked variable needs to be changed by an action.
 
         modelContent = this.get('model.skipped.content.content');
@@ -95,7 +97,8 @@ export default class IndexController extends Controller{
                                    id:modelContent[i]._id
             }
         }
-        this.send('setSkippedArray',this.skippedArray);
+        // this.send('setSkippedArray',this.skippedArray);
+        this.send('calcNumJobs');
     }
 
     @action setMonth(selectedValue){
@@ -108,25 +111,9 @@ export default class IndexController extends Controller{
         this.send('generateDate');
     }
 
-    @action setDateArray(dateArray){
-        this.dateArray = dateArray;  
-    }
-
-    @action setSkippedArray(skippedArray){
-        this.skippedArray = skippedArray;  
-    }
 
     @action deleteFromDb (id){
-    //    this.store.findRecord('index',id).then(
-    //             (value)=>{
-    //                 this.store.deleteRecord(value);
-    //                 value.save().then(
-    //                     ()=>{
-    //                         this.send('generateDate');
-    //                     }
-    //                 )
-    //             }
-    //         )
+    
     //ID to be deleted will be passed from click in <Job> component.
         let req = this.store.peekRecord('index',id);
         this.store.deleteRecord(req);
@@ -135,7 +122,7 @@ export default class IndexController extends Controller{
                 this.send('generateDate');
             }
         )
-        
+          
     }
 
     @action moveJob(id,direction,startOn){
@@ -198,6 +185,16 @@ export default class IndexController extends Controller{
         req.save().then(
             ()=>{
                 this.send('generateDate');
+            }
+        )
+    }
+
+    @action calcNumJobs(){
+        this.store.findAll('index').then(
+            (records)=>{
+                this.numberOfJobs = records._length;
+                console.log(this.numberOfJobs);
+                
             }
         )
     }
