@@ -9,6 +9,8 @@ export default class IndexController extends Controller{
     @tracked year= null;
     @tracked skippedArray=[];
     @tracked numberOfJobs= null;
+    @tracked moveByN= null;
+
 
     months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']; //List of months for dropdown
     years = ['2024','2023','2022','2021','2020','2019'];    //List of years for dropdown
@@ -66,19 +68,10 @@ export default class IndexController extends Controller{
 
     @action generateDate (){
         //Model hook from index.js route returns an object {job , skipped} which contains info about jobs and Dates of every skip
-
         let modelContent = this.get('model.job.content.content');
         this.dateArray=[];  
         for (let i=0; i< modelContent.length ; i++)
         {
-            // this.store.findRecord('index',this.modelContent[i]._id).then(
-            //     (value)=>{
-            //         this.dateArray[i]= {startOn: value.get('startOn'),
-            //                             jobTitle: value.get('jobTitle'), 
-            //                             id:this.modelContent[i]._id
-            //                             };
-            //     }
-            // )
             let req = this.store.peekRecord('index',modelContent[i]._id);
             this.dateArray[i]= {startOn: req.get('startOn'),
                                 jobTitle: req.get('jobTitle'),
@@ -125,9 +118,10 @@ export default class IndexController extends Controller{
           
     }
 
-    @action moveJob(id,direction,startOn,n){
+    @action moveJob(id,direction,n){
+        console.log(id);
         let req = this.store.peekRecord('index',id);
-        let thisMoment = moment(startOn,"D-MMM-YYYY");
+        let thisMoment = moment(req.startOn,"D-MMM-YYYY");
         let matchFound = true;
 
         //Direction 1 for right move , Direction 0 for left move , depending on click in <Job> component.
@@ -135,7 +129,7 @@ export default class IndexController extends Controller{
         {   
             if (this.skippedArray.length === 0)
             {
-                thisMoment = thisMoment.add(1,'day');
+                thisMoment = thisMoment.add(n,'day');
             }
             else{
                 //Check if day after being moved lands on a skipped day
@@ -164,7 +158,7 @@ export default class IndexController extends Controller{
         {
             if (this.skippedArray.length === 0)
             {
-                thisMoment = thisMoment.subtract(1,'day');
+                thisMoment = thisMoment.subtract(n,'day');
             }
             else{
                 thisMoment = thisMoment.subtract(n,'day');
@@ -188,7 +182,7 @@ export default class IndexController extends Controller{
         req.startOn = thisMoment.format('D-MMM-YYYY');
         req.save().then(
             ()=>{
-                this.send('generateDate');
+                this.generateDate();
             }
         )
     }
@@ -197,10 +191,16 @@ export default class IndexController extends Controller{
         this.store.findAll('index').then(
             (records)=>{
                 this.numberOfJobs = records._length;
-                console.log(this.numberOfJobs);
-                
             }
         )
+    }
+
+    @action moveBulk(){
+        this.dateArray.forEach((element)=>{
+            console.log(element.id);
+            this.send('moveJob',element.id,"1",this.moveByN);
+            console.log(this.moveByN);
+        })
     }
 }
 

@@ -16,11 +16,11 @@
     <div class="jobTitle">{{job.jobTitle}}</div>
     
     <div class = "jobControls">
-        <button {{on "click" (fn @moveJob job.id "0" job.startOn 1)}}> &larr;</button>
+        <button {{on "click" (fn @moveJob job.id "0" 1)}}> &larr;</button>
         
         <button {{on "click" (fn @deleteFromDb job.id)}}>Del</button>
     
-        <button {{on "click" (fn @moveJob job.id "1" job.startOn 1)}}> &rarr; </button>
+        <button {{on "click" (fn @moveJob job.id "1" 1)}}> &rarr; </button>
     </div>
     
 </div>

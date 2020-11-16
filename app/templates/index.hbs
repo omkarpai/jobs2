@@ -12,6 +12,16 @@
     {{/each}}
 </select>
 
+<label>
+ Move all jobs by n days:
+
+ <Input
+   @type="number"
+   @value={{this.moveByN}}
+ />
+  <button type="button" {{on "click" this.moveBulk}}>Bulk move</button> 
+</label>
+
 <div {{did-insert this.calcNumJobs}}>
 Total number of jobs in system:{{this.numberOfJobs}}
 </div>
@@ -29,5 +39,7 @@ Total number of jobs in system:{{this.numberOfJobs}}
         @skippedArray={{this.skippedArray}}
     >
     </Month>
+
+    
 
 
