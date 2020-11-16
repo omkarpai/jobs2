@@ -125,7 +125,7 @@ export default class IndexController extends Controller{
           
     }
 
-    @action moveJob(id,direction,startOn){
+    @action moveJob(id,direction,startOn,n){
         let req = this.store.peekRecord('index',id);
         let thisMoment = moment(startOn,"D-MMM-YYYY");
         let matchFound = true;
@@ -140,14 +140,16 @@ export default class IndexController extends Controller{
             else{
                 //Check if day after being moved lands on a skipped day
                 //If yes, keep adding or subtracting till job doesnt land on a skipped day.
+                thisMoment = thisMoment.add(n,'day');
                 while (matchFound === true){
-                    thisMoment = thisMoment.add(1,'day');
+                    
                     //Iterating over array of skipped dates to find any match.
                     //You want to keep iterating over skipped array till no match is found.
                     for (let i=0 ; i<this.skippedArray.length ; i++){
                         
                         if (thisMoment.format('D-MMM-YYYY') === this.skippedArray[i].skippedDate){
                             matchFound = true;
+                            thisMoment = thisMoment.add(1,'day');
                             break;
                         }
                         else
@@ -165,12 +167,14 @@ export default class IndexController extends Controller{
                 thisMoment = thisMoment.subtract(1,'day');
             }
             else{
+                thisMoment = thisMoment.subtract(n,'day');
                 while (matchFound === true){
-                    thisMoment = thisMoment.subtract(1,'day');
+                    
                     for (let i=0 ; i<this.skippedArray.length ; i++){
                         
                         if (thisMoment.format('D-MMM-YYYY') === this.skippedArray[i].skippedDate){
                             matchFound = true;
+                            thisMoment = thisMoment.subtract(1,'day');
                             break;
                         }
                         else
