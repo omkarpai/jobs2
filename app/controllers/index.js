@@ -30,10 +30,10 @@ export default class IndexController extends Controller{
         
     }
 
-    @action postNewSkip (day,month,year){
+    @action postNewSkip (fullDate){
         //Action to find if given day is already skipped. 
         //If already skipped delete the record to unskip it. Otherwise create a new skip record
-        let skippedDate = day + "-" + month + "-" + year;
+        let skippedDate = fullDate;
         let skipFound = false;
        
         for(let i=0 ; i<this.skippedArray.length ; i++)
@@ -201,6 +201,53 @@ export default class IndexController extends Controller{
             this.send('moveJob',element.id,"1",this.moveByN);
             console.log(this.moveByN);
         })
+    }
+
+    @action skipAllWeekends(changeEvent){
+        console.log(changeEvent.target.checked);
+        
+        let thisMoment = moment().year(this.year - 1);
+        thisMoment = thisMoment.month(this.month);
+        thisMoment = thisMoment.date(1);
+
+        while(thisMoment.day() !== 0){
+            thisMoment = thisMoment.add(1,'day');
+        }
+        
+        let firstSunday = thisMoment;
+        let arrayOfSundays = [thisMoment.format('D-MMM-YYYY')];
+
+        for (let i=0 ; i<106 ;  i++){
+            let MomentOfSundays = moment(arrayOfSundays[i],"D-MMM-YYYY");
+            MomentOfSundays = MomentOfSundays.add(7,'day');
+            arrayOfSundays[i+1] =  MomentOfSundays.format('D-MMM-YYYY');
+        }
+
+        console.log("Array of sundays:",arrayOfSundays);
+
+        let firstSaturday = firstSunday.subtract(1,'day');
+        let arrayOfSaturdays = [firstSaturday.format('D-MMM-YYYY')]
+
+        for (let i=0 ; i<106 ;  i++){
+            let MomentOfSaturdays = moment(arrayOfSaturdays[i],"D-MMM-YYYY");
+            MomentOfSaturdays = MomentOfSaturdays.add(7,'day');
+            arrayOfSaturdays[i+1] =  MomentOfSaturdays.format('D-MMM-YYYY');
+        }
+
+        console.log("Array of saturdays:",arrayOfSaturdays);
+
+        arrayOfSundays.forEach(
+            (element)=>{
+                this.send('postNewSkip',element);
+            }
+        )
+
+        arrayOfSaturdays.forEach(
+            (element)=>{
+                this.send('postNewSkip',element);
+            }
+        )
+
     }
 }
 
