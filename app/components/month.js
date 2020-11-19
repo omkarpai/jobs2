@@ -44,7 +44,8 @@ didReceiveAttrs(){
             //Create an array of days with property of each day.
             this.days[i-1] = {
                 dayOfMonth:i,
-                isSkipped: isSkipped
+                isSkipped: isSkipped,
+                fullDate: i + "-" + this.month + "-" +this.year
             }
         }
     }

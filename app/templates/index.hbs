@@ -22,6 +22,14 @@
   <button type="button" {{on "click" this.moveBulk}}>Bulk move</button> 
 </label>
 
+<label>
+  Skip all sundays and saturdays:
+  <Input
+    @type="checkbox"
+    {{on "change" this.skipAllWeekends}}
+  />
+</label>
+
 <div {{did-insert this.calcNumJobs}}>
 Total number of jobs in system:{{this.numberOfJobs}}
 </div>
@@ -39,6 +47,12 @@ Total number of jobs in system:{{this.numberOfJobs}}
         @skippedArray={{this.skippedArray}}
     >
     </Month>
+
+    <div>
+      {{#each @model.job as |job|}}
+        {{job.startOn}}
+      {{/each}}
+    </div>
 
     
 
