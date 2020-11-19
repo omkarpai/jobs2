@@ -10,9 +10,9 @@ export default class JobComponent extends Component {
     @tracked month = null;
     @tracked year = null;
     @tracked dayOfTheWeek= null;
-    @tracked dateArray;
+    @tracked dateArray = [];
     @tracked dateString=null;
-    @tracked jobsForThisDay;
+    @tracked jobsForThisDay = [];
 
     didReceiveAttrs(){
         //Get properties passed in
@@ -28,25 +28,21 @@ export default class JobComponent extends Component {
         
         //Loop to iterate over entire array of job dates to find which jobs belong to this day.
         let j=0;
-        for(let i=0 ; i<this.dateArray.length ; i++)
-        {  
-            if (this.dateString === this.dateArray[i].startOn)
-            {
-                this.jobsForThisDay[j]= {
-                    startOn:    this.dateArray[i].startOn,
-                    jobTitle:   this.dateArray[i].jobTitle,
-                    id:         this.dateArray[i].id
+        this.dateArray.forEach(
+            (element)=>{
+                if (this.dateString === element.startOn)
+                {
+                    this.jobsForThisDay[j]= {
+                        startOn:    element.startOn,
+                        jobTitle:   element.jobTitle,
+                        jobRecord:  element
+                    }
+                    j++;
                 }
-                j++;
             }
-        } 
+        )
+                
         
     }
-
-    @action testing(){
-        console.log("One click 2 actions");
-    }
-
-
 
 }

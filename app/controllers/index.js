@@ -4,12 +4,12 @@ import {action} from '@ember/object';
 import moment from 'moment';
 
 export default class IndexController extends Controller{
-    @tracked dateArray=[];
+    
     @tracked month= null;
     @tracked year= null;
-    @tracked skippedArray=[];
-    @tracked numberOfJobs= null;
     @tracked moveByN= null;
+    @tracked jobTracker = this.store.peekAll('index');
+    @tracked skipTracker = this.store.peekAll('skipped');
 
 
     months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']; //List of months for dropdown
@@ -21,184 +21,139 @@ export default class IndexController extends Controller{
             startOn: startDate,
             jobTitle: jobTitle
         });
-        
-        newRecord.save().then(
-            ()=>{
-                this.send('generateDate');
-            }
-        )
-        
+        this.jobTracker = this.store.peekAll('index');
+        this.skipTracker = this.store.peekAll('skipped');
+        newRecord.save();
     }
 
-    @action postNewSkip (fullDate){
+    @action postNewSkip (fullDate , skippedRecord){
         //Action to find if given day is already skipped. 
         //If already skipped delete the record to unskip it. Otherwise create a new skip record
-        let skippedDate = fullDate;
-        let skipFound = false;
-       
-        for(let i=0 ; i<this.skippedArray.length ; i++)
-        {  
-            if (skippedDate === this.skippedArray[i].skippedDate)
-            {
-                skipFound = true;
-                let req = this.store.peekRecord('skipped',this.skippedArray[i].id);
-                this.store.deleteRecord(req);
-                req.save().then(
-                    ()=>{
-                        this.send('generateDate');
-                        }
-                )
-                break;
-            }
-        }
-
-        if (skipFound === false)
+        if (skippedRecord === null)
         {
             let newRecord = this.store.createRecord('skipped',{
-                skippedDate: skippedDate
+                skippedDate: fullDate
             });
-            
+    
             newRecord.save().then(
                 ()=>{
-                    this.send('generateDate');
+                    this.jobTracker = this.store.peekAll('index');
+                    this.skipTracker = this.store.peekAll('skipped');
                 }
-            )
+            );
+        }
+        else{
+            this.store.deleteRecord(skippedRecord);
+            
+            
+            skippedRecord.save().then(
+                ()=>{
+                    this.jobTracker = this.store.peekAll('index');
+                    this.skipTracker = this.store.peekAll('skipped');
+                }
+            );
         }
     }
 
-    @action generateDate (){
-        //Model hook from index.js route returns an object {job , skipped} which contains info about jobs and Dates of every skip
-        let modelContent = this.get('model.job.content.content');
-        this.dateArray=[];  
-        for (let i=0; i< modelContent.length ; i++)
-        {
-            let req = this.store.peekRecord('index',modelContent[i]._id);
-            this.dateArray[i]= {startOn: req.get('startOn'),
-                                jobTitle: req.get('jobTitle'),
-                                id:modelContent[i]._id
-            }
-        }
-        // this.send('setDateArray',this.dateArray);
-        //I think for Ember to trigger re render , a tracked variable needs to be changed by an action.
-
-        modelContent = this.get('model.skipped.content.content');
-        this.skippedArray=[];
-        for (let i=0; i< modelContent.length ; i++)
-        {
-            let req = this.store.peekRecord('skipped',modelContent[i]._id);
-            this.skippedArray[i]= {skippedDate: req.get('skippedDate'),
-                                   id:modelContent[i]._id
-            }
-        }
-        // this.send('setSkippedArray',this.skippedArray);
-        this.send('calcNumJobs');
-    }
 
     @action setMonth(selectedValue){
         this.month = selectedValue.target.value;
-        this.send('generateDate');
+        
       }
   
     @action setYear(selectedValue){
         this.year = selectedValue.target.value;
-        this.send('generateDate');
+        
     }
 
 
-    @action deleteFromDb (id){
-    
-    //ID to be deleted will be passed from click in <Job> component.
-        let req = this.store.peekRecord('index',id);
-        this.store.deleteRecord(req);
-        req.save().then(
+    @action deleteFromDb (jobRecord){
+        jobRecord.deleteRecord();
+        jobRecord.save().then(
             ()=>{
-                this.send('generateDate');
+                this.jobTracker = this.store.peekAll('index');
+                this.skipTracker = this.store.peekAll('skipped');
             }
-        )
-          
+        );
+        
+        
     }
 
-    @action moveJob(id,direction,n){
-        console.log(id);
-        let req = this.store.peekRecord('index',id);
-        let thisMoment = moment(req.startOn,"D-MMM-YYYY");
+    @action moveJob(jobRecord,direction,n){
+        let thisMoment = moment(jobRecord.startOn,"D-MMM-YYYY");
         let matchFound = true;
-
-        //Direction 1 for right move , Direction 0 for left move , depending on click in <Job> component.
-        if (direction === "1")
-        {   
-            if (this.skippedArray.length === 0)
-            {
+        let skippedArray = this.store.peekAll('skipped');
+    //Direction 1 for right move , Direction 0 for left move , depending on click in <Job> component.
+        
+        if (skippedArray._length === 0)
+        {
+            if(direction === "1"){
                 thisMoment = thisMoment.add(n,'day');
             }
             else{
-                //Check if day after being moved lands on a skipped day
-                //If yes, keep adding or subtracting till job doesnt land on a skipped day.
-                thisMoment = thisMoment.add(n,'day');
-                while (matchFound === true){
-                    
-                    //Iterating over array of skipped dates to find any match.
-                    //You want to keep iterating over skipped array till no match is found.
-                    for (let i=0 ; i<this.skippedArray.length ; i++){
-                        
-                        if (thisMoment.format('D-MMM-YYYY') === this.skippedArray[i].skippedDate){
-                            matchFound = true;
-                            thisMoment = thisMoment.add(1,'day');
-                            break;
-                        }
-                        else
-                            matchFound = false;
-                    }
-                } 
-
+                thisMoment = thisMoment.subtract(n,'day');
             }
             
         }
-        else
-        {
-            if (this.skippedArray.length === 0)
-            {
-                thisMoment = thisMoment.subtract(n,'day');
+        else{
+            //Check if day after being moved lands on a skipped day
+            //If yes, keep adding or subtracting till job doesnt land on a skipped day.
+            if(direction === "1"){
+                thisMoment = thisMoment.add(n,'day');
             }
             else{
                 thisMoment = thisMoment.subtract(n,'day');
-                while (matchFound === true){
-                    
-                    for (let i=0 ; i<this.skippedArray.length ; i++){
-                        
-                        if (thisMoment.format('D-MMM-YYYY') === this.skippedArray[i].skippedDate){
+            }
+            while (matchFound === true){
+                
+                //Iterating over array of skipped dates to find any match.
+                //You want to keep iterating over skipped array till no match is found.
+                
+                skippedArray.every(
+                    (element)=>{
+                        if (thisMoment.format('D-MMM-YYYY') === element.skippedDate){
                             matchFound = true;
-                            thisMoment = thisMoment.subtract(1,'day');
-                            break;
+                            if(direction === "1"){
+                                thisMoment = thisMoment.add(n,'day');
+                            }
+                            else{
+                                thisMoment = thisMoment.subtract(n,'day');
+                            }
+                            return false;
                         }
                         else
                             matchFound = false;
                     }
-                } 
-
-            }
+                )    
+            } 
         }
+            
         //To update property for any record just assign that record a new value
-        req.startOn = thisMoment.format('D-MMM-YYYY');
-        req.save().then(
+        jobRecord.startOn = thisMoment.format('D-MMM-YYYY');
+
+        jobRecord.save().then(
             ()=>{
-                this.generateDate();
+                this.jobTracker = this.store.peekAll('index');
+                this.skipTracker = this.store.peekAll('skipped');
             }
-        )
+        );
     }
 
-    @action calcNumJobs(){
-        this.store.findAll('index').then(
-            (records)=>{
-                this.numberOfJobs = records._length;
-            }
-        )
+    get numberOfJobs(){
+        return this.jobTracker._length;
+    }
+
+    get getJobArray (){
+        return this.jobTracker;
+    }
+
+    get getSkippedArray (){
+        return this.skipTracker;
     }
 
     @action moveBulk(){
-        this.dateArray.forEach((element)=>{
-            console.log(element.id);
-            this.send('moveJob',element.id,"1",this.moveByN);
+        this.jobTracker.forEach((record)=>{
+            this.send('moveJob',record,"1",this.moveByN);
             console.log(this.moveByN);
         })
     }

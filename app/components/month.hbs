@@ -1,9 +1,10 @@
 
 <div class="days" >
+
 {{#each days as |day|}}
     <div class={{if day.isSkipped "day-red" "day"}}>
         <div>
-            <button class="skipButton" {{on "click" (fn @postNewSkip day.fullDate)}}>
+            <button class="skipButton" {{on "click" (fn @postNewSkip day.fullDate day.skippedRecord)}}>
                 {{#if day.isSkipped}}
                 Dont skip
                 {{else}}
@@ -31,5 +32,6 @@
     </div>
 {{/each}}
 </div>
+
 
 

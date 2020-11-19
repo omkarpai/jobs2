@@ -15,9 +15,11 @@ export default class MonthComponent extends Component{
 
 didReceiveAttrs(){
     //Get properties passed in
+    console.log("recieved attrs")
     this.month= this.get('month');
     this.year= this.get('year');
     this.skippedArray = this.get('skippedArray');
+    
     this.days = [];
 
     if (this.month && this.year !== null)
@@ -32,20 +34,25 @@ didReceiveAttrs(){
         for(let i=1 ; i<=this.nomDays; i++)
         {
             let isSkipped= false;
+            let skippedRecord = null;
             let dateString = i + "-" + this.month + "-" + this.year;
 
             //Iterate over skipped array and find if current day is skipped
-            for (let j=0 ; j<this.skippedArray.length ; j++){
-                if (dateString === this.skippedArray[j].skippedDate){
-                    isSkipped = true;
-                    break;
+            this.skippedArray.every(
+                (element)=>{
+                    if (dateString === element.skippedDate){
+                        isSkipped = true;
+                        skippedRecord = element;
+                        return false;
+                    }
                 }
-            }
+            )
             //Create an array of days with property of each day.
             this.days[i-1] = {
                 dayOfMonth:i,
                 isSkipped: isSkipped,
-                fullDate: i + "-" + this.month + "-" +this.year
+                fullDate: i + "-" + this.month + "-" +this.year,
+                skippedRecord: skippedRecord
             }
         }
     }
