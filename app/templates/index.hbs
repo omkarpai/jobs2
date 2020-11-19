@@ -30,7 +30,7 @@
   />
 </label>
 
-<div {{did-insert this.calcNumJobs}}>
+<div>
 Total number of jobs in system:{{this.numberOfJobs}}
 </div>
 
@@ -39,20 +39,16 @@ Total number of jobs in system:{{this.numberOfJobs}}
     <Month 
         @month={{this.month}} 
         @year={{this.year}} 
-        @dateArray={{this.dateArray}}
+        @dateArray={{this.getJobArray}}
         @postToDb={{this.postToDb}} 
         @deleteFromDb={{this.deleteFromDb}}
         @moveJob={{this.moveJob}}
         @postNewSkip={{this.postNewSkip}}
-        @skippedArray={{this.skippedArray}}
+        @skippedArray={{this.getSkippedArray}}
     >
     </Month>
 
-    <div>
-      {{#each @model.job as |job|}}
-        {{job.startOn}}
-      {{/each}}
-    </div>
+    
 
     
 
