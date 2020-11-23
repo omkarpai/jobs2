@@ -44,8 +44,6 @@ export default class IndexController extends Controller{
         }
         else{
             this.store.deleteRecord(skippedRecord);
-            
-            
             skippedRecord.save().then(
                 ()=>{
                     this.jobTracker = this.store.peekAll('index');
@@ -154,14 +152,13 @@ export default class IndexController extends Controller{
     @action moveBulk(){
         this.jobTracker.forEach((record)=>{
             this.send('moveJob',record,"1",this.moveByN);
-            console.log(this.moveByN);
+            
         })
     }
 
     @action skipAllWeekends(changeEvent){
-        console.log(changeEvent.target.checked);
-        
-        let thisMoment = moment().year(this.year - 1);
+        let skippedArray = this.store.peekAll('skipped');
+        let thisMoment = moment().year(this.year);
         thisMoment = thisMoment.month(this.month);
         thisMoment = thisMoment.date(1);
 
@@ -172,7 +169,7 @@ export default class IndexController extends Controller{
         let firstSunday = thisMoment;
         let arrayOfSundays = [thisMoment.format('D-MMM-YYYY')];
 
-        for (let i=0 ; i<106 ;  i++){
+        for (let i=0 ; i<15 ;  i++){
             let MomentOfSundays = moment(arrayOfSundays[i],"D-MMM-YYYY");
             MomentOfSundays = MomentOfSundays.add(7,'day');
             arrayOfSundays[i+1] =  MomentOfSundays.format('D-MMM-YYYY');
@@ -183,7 +180,7 @@ export default class IndexController extends Controller{
         let firstSaturday = firstSunday.subtract(1,'day');
         let arrayOfSaturdays = [firstSaturday.format('D-MMM-YYYY')]
 
-        for (let i=0 ; i<106 ;  i++){
+        for (let i=0 ; i<15 ;  i++){
             let MomentOfSaturdays = moment(arrayOfSaturdays[i],"D-MMM-YYYY");
             MomentOfSaturdays = MomentOfSaturdays.add(7,'day');
             arrayOfSaturdays[i+1] =  MomentOfSaturdays.format('D-MMM-YYYY');
@@ -191,18 +188,48 @@ export default class IndexController extends Controller{
 
         console.log("Array of saturdays:",arrayOfSaturdays);
 
-        arrayOfSundays.forEach(
-            (element)=>{
-                this.send('postNewSkip',element);
-            }
-        )
-
-        arrayOfSaturdays.forEach(
-            (element)=>{
-                this.send('postNewSkip',element);
-            }
-        )
-
+        let arrayOfWeekend = arrayOfSundays.concat(arrayOfSaturdays);
+        console.log(arrayOfWeekend);
+        console.log(changeEvent.target.checked);
+        
+            arrayOfWeekend.forEach(
+                (date)=>{
+                    
+                    skippedArray.every(
+                        (element)=>{
+                            console.log("1");
+                            if(element.skippedDate === date){
+                                if(changeEvent.target.checked === false){
+                                    this.store.deleteRecord(element);
+                                    element.save().then(
+                                        ()=>{
+                                            this.jobTracker = this.store.peekAll('index');
+                                            this.skipTracker = this.store.peekAll('skipped');
+                                        }
+                                    );
+                                }
+                                
+                            }
+                            else{
+                                let newRecord = this.store.createRecord('skipped',{
+                                    skippedDate: date
+                                });
+                                newRecord.save().then(
+                                    ()=>{
+                                        this.jobTracker = this.store.peekAll('index');
+                                        this.skipTracker = this.store.peekAll('skipped');
+                                    }
+                                );
+                            }
+                        }
+                    )
+                    if(skippedArray._length === 0){
+                        this.send('postNewSkip',date,null);
+                    }
+                    
+                }
+            )
+        
     }
 }
 

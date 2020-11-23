@@ -11,6 +11,9 @@
 
 
 {{#each jobsForThisDay as |job|}}
+{{#if job.jobRecord.isDeleted}}
+<div></div>
+{{else}}
 <div class="job">
 
     <div class="jobTitle">{{job.jobTitle}}</div>
@@ -24,5 +27,7 @@
     </div>
     
 </div>
+{{/if}}
+
     
 {{/each}}
