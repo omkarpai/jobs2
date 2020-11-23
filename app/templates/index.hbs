@@ -22,31 +22,57 @@
   <button type="button" {{on "click" this.moveBulk}}>Bulk move</button> 
 </label>
 
+
 <label>
-  Skip all sundays and saturdays:
+  Skip all sundays and saturdays going forward:
   <Input
     @type="checkbox"
     {{on "change" this.skipAllWeekends}}
   />
 </label>
 
+
 <div>
 Total number of jobs in system:{{this.numberOfJobs}}
 </div>
 
-
-
+<div class="days">
+{{#each this.numberOfDays as |day|}}
+    {{#each @model.skipped as |skip|}}
+    {{#if  (is-equal skip.skippedDate day.fullDate)}}
     <Month 
         @month={{this.month}} 
         @year={{this.year}} 
-        @dateArray={{this.getJobArray}}
-        @postToDb={{this.postToDb}} 
+        @dateArray={{@model.job}}
+        @postToDb={{this.postToDb}}
+        @fullDate={{day.fullDate}}
+        @skipped={{"True"}}
+        @skippedRecord={{skip}}
         @deleteFromDb={{this.deleteFromDb}}
         @moveJob={{this.moveJob}}
         @postNewSkip={{this.postNewSkip}}
-        @skippedArray={{this.getSkippedArray}}
-    >
-    </Month>
+    />
+    {{/if}}
+
+    {{/each}}
+    {{#unless (is-present @model.skipped day.fullDate)}}
+    <Month 
+        @month={{this.month}} 
+        @year={{this.year}} 
+        @dateArray={{@model.job}}
+        @postToDb={{this.postToDb}}
+        @fullDate={{day.fullDate}}
+        @skipped={{"False"}}
+        @skippedRecord={{"null"}}
+        @deleteFromDb={{this.deleteFromDb}}
+        @moveJob={{this.moveJob}}
+        @postNewSkip={{this.postNewSkip}}
+    />
+    {{/unless}}
+{{/each}}
+</div>
+
+    
 
     
 
