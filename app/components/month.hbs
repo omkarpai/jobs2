@@ -1,11 +1,11 @@
 
-<div class="days" >
 
-{{#each days as |day|}}
-    <div class={{if day.isSkipped "day-red" "day"}}>
+
+
+    <div class={{if this.isSkipped "day-red" "day"}}>
         <div>
-            <button class="skipButton" {{on "click" (fn @postNewSkip day.fullDate day.skippedRecord)}}>
-                {{#if day.isSkipped}}
+            <button class="skipButton" {{on "click" (fn @postNewSkip @fullDate @skippedRecord)}}>
+                {{#if this.isSkipped}}
                 Dont skip
                 {{else}}
                 Skip
@@ -15,9 +15,14 @@
         
 
         <div class="dayProps">
-            {{day.dayOfMonth}} - {{@month}} - {{@year}} 
+            {{@fullDate}}
         </div>
          
+        <div class="weekDay">
+        {{this.dayOfTheWeek}}
+        </div>
+
+
         <Job 
             @day={{day.dayOfMonth}} 
             @month={{@month}} 
@@ -27,11 +32,10 @@
             @deleteFromDb={{@deleteFromDb}}
             @moveJob={{@moveJob}}
         >
-
         </Job>
     </div>
-{{/each}}
-</div>
+
+
 
 
 
