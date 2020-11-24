@@ -10,38 +10,11 @@ export default class IndexController extends Controller {
 	months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'] //List of months for dropdown
 	years = ['2024', '2023', '2022', '2021', '2020', '2019'] //List of years for dropdown
 
-	@action setMonth(changeEvent) {
-		this.month = changeEvent.target.value
+	get numberOfJobs() {
+		return this.store.peekAll('job')._length
 	}
 
-	@action setYear(changeEvent) {
-		this.year = changeEvent.target.value
-	}
-
-	@action postToDb(startDate, jobTitle) {
-		let newRecord = this.store.createRecord('index', {
-			startOn: startDate,
-			jobTitle: jobTitle,
-		})
-		newRecord.save()
-	}
-
-	@action postNewSkip(fullDate, skippedRecord) {
-		//Action to find if given day is already skipped.
-		//If already skipped delete the record to unskip it. Otherwise create a new skip record
-
-		if (skippedRecord === 'null') {
-			let newRecord = this.store.createRecord('skipped', {
-				skippedDate: fullDate,
-			})
-			newRecord.save()
-		} else {
-			this.store.deleteRecord(skippedRecord)
-			skippedRecord.save()
-		}
-	}
-
-	get numberOfDays() {
+	get daysInSelectedMonth() {
 		let newMoment = moment()
 		let days = []
 
@@ -64,6 +37,37 @@ export default class IndexController extends Controller {
 		return days
 	}
 
+	@action setMonth(changeEvent) {
+		this.month = changeEvent.target.value
+	}
+
+	@action setYear(changeEvent) {
+		this.year = changeEvent.target.value
+	}
+
+	@action postToDb(startDate, jobTitle) {
+		let newRecord = this.store.createRecord('job', {
+			startOn: startDate,
+			jobTitle: jobTitle,
+		})
+		newRecord.save()
+	}
+
+	@action postNewSkip(fullDate, skippedRecord) {
+		//Action to find if given day is already skipped.
+		//If already skipped delete the record to unskip it. Otherwise create a new skip record
+
+		if (skippedRecord === 'null') {
+			let newRecord = this.store.createRecord('skip', {
+				skippedDate: fullDate,
+			})
+			newRecord.save()
+		} else {
+			this.store.deleteRecord(skippedRecord)
+			skippedRecord.save()
+		}
+	}
+
 	@action deleteFromDb(jobRecord) {
 		jobRecord.deleteRecord()
 		jobRecord.save()
@@ -73,7 +77,7 @@ export default class IndexController extends Controller {
 		let thisMoment = moment(jobRecord.startOn, 'D-MMM-YYYY')
 
 		let matchFound = true
-		let skippedArray = this.store.peekAll('skipped')
+		let skippedArray = this.store.peekAll('skip')
 		//Direction 1 for right move , Direction 0 for left move , depending on click in <Job> component.
 
 		if (skippedArray._length === 0) {
@@ -83,8 +87,8 @@ export default class IndexController extends Controller {
 				thisMoment = thisMoment.subtract(n, 'day')
 			}
 		} else {
-			//Check if day after being moved lands on a skipped day
-			//If yes, keep adding or subtracting till job doesnt land on a skipped day.
+			//Check if day after being moved lands on a skip day
+			//If yes, keep adding or subtracting till job doesnt land on a skip day.
 
 			if (direction === '1') {
 				thisMoment = thisMoment.add(n, 'day')
@@ -93,8 +97,8 @@ export default class IndexController extends Controller {
 			}
 
 			while (matchFound === true) {
-				//Iterating over array of skipped dates to find any match.
-				//You want to keep iterating over skipped array till no match is found.
+				//Iterating over array of skip dates to find any match.
+				//You want to keep iterating over skip array till no match is found.
 				matchFound = false
 
 				skippedArray.forEach((element) => {
@@ -115,23 +119,21 @@ export default class IndexController extends Controller {
 		jobRecord.save()
 	}
 
-	get numberOfJobs() {
-		return this.store.peekAll('index')._length
-	}
-
 	@action moveBulk(moveByN) {
-		let jobs = this.store.peekAll('index')
-		jobs.forEach((record) => {
-			this.send('moveJob', record, '1', moveByN)
+		let jobs = this.store.peekAll('job')
+		jobs.forEach((jobRecord) => {
+			this.send('moveJob', jobRecord, '1', moveByN)
 		})
 	}
 
 	@action skipAllWeekends(changeEvent) {
-		let skippedArray = this.store.peekAll('skipped')
+		let skippedArray = this.store.peekAll('skip')
+		//Will create a moment with date as (1 - selectedMonth - selectedYear)
 		let thisMoment = moment().year(this.year)
 		thisMoment = thisMoment.month(this.month)
 		thisMoment = thisMoment.date(1)
 
+		//Find first sunday of selected month
 		while (thisMoment.day() !== 0) {
 			thisMoment = thisMoment.add(1, 'day')
 		}
@@ -139,7 +141,8 @@ export default class IndexController extends Controller {
 		let firstSunday = thisMoment
 		let arrayOfSundays = [thisMoment.format('D-MMM-YYYY')]
 
-		for (let i = 0; i < 2; i++) {
+		//Keep adding 7 to find 25 more sundays. (Around half a year worth of sundays)
+		for (let i = 0; i < 25; i++) {
 			let MomentOfSundays = moment(arrayOfSundays[i], 'D-MMM-YYYY')
 			MomentOfSundays = MomentOfSundays.add(7, 'day')
 			arrayOfSundays[i + 1] = MomentOfSundays.format('D-MMM-YYYY')
@@ -148,7 +151,7 @@ export default class IndexController extends Controller {
 		let firstSaturday = firstSunday.subtract(1, 'day')
 		let arrayOfSaturdays = [firstSaturday.format('D-MMM-YYYY')]
 
-		for (let i = 0; i < 2; i++) {
+		for (let i = 0; i < 25; i++) {
 			let MomentOfSaturdays = moment(arrayOfSaturdays[i], 'D-MMM-YYYY')
 			MomentOfSaturdays = MomentOfSaturdays.add(7, 'day')
 			arrayOfSaturdays[i + 1] = MomentOfSaturdays.format('D-MMM-YYYY')
@@ -156,6 +159,10 @@ export default class IndexController extends Controller {
 
 		let arrayOfWeekend = arrayOfSundays.concat(arrayOfSaturdays)
 
+		//Iterate over array of weekends to find if any date is already skipped.
+		//If the date is already skipped and checkbox is checked , do nothing.
+		//If the date is already skipped and checkbox for skipping is not checked, delete the skip.
+		//If the date is not skipped, create a new record to indicate skip.
 		arrayOfWeekend.forEach((date) => {
 			let matchFound = false
 			skippedArray.forEach((element) => {

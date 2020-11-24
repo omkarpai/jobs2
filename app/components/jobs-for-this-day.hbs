@@ -1,5 +1,5 @@
 
-{{#each @dateArray as |job|}}
+{{#each @jobRecords as |job|}}
 
     {{#if (is-equal job.startOn @fullDate)}}
         {{#if job.isDeleted}}
