@@ -73,6 +73,13 @@ export default class IndexController extends Controller {
 		jobRecord.save()
 	}
 
+	@action deleteAllJobs() {
+		let jobs = this.store.peekAll('job')
+		jobs.forEach((element) => {
+			element.destroyRecord()
+		})
+	}
+
 	@action moveJob(jobRecord, direction, n) {
 		let thisMoment = moment(jobRecord.startOn, 'D-MMM-YYYY')
 
