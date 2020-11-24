@@ -13,13 +13,13 @@
 </select>
 
 <label>
- Move all jobs by n days:
+ Move all jobs forward by n days:
 
  <Input
    @type="number"
-   @value={{this.moveByN}}
+   @value={{moveByN}}
  />
-  <button type="button" {{on "click" this.moveBulk}}>Bulk move</button> 
+  <button type="button" {{on "click" (fn this.moveBulk moveByN)}}>Bulk move</button> 
 </label>
 
 
@@ -37,33 +37,30 @@ Total number of jobs in system:{{this.numberOfJobs}}
 </div>
 
 <div class="days">
-{{#each this.numberOfDays as |day|}}
-    {{#each @model.skipped as |skip|}}
-    {{#if  (is-equal skip.skippedDate day.fullDate)}}
-    <Month 
-        @month={{this.month}} 
-        @year={{this.year}} 
-        @dateArray={{@model.job}}
-        @postToDb={{this.postToDb}}
-        @fullDate={{day.fullDate}}
-        @skipped={{"True"}}
-        @skippedRecord={{skip}}
-        @deleteFromDb={{this.deleteFromDb}}
-        @moveJob={{this.moveJob}}
-        @postNewSkip={{this.postNewSkip}}
-    />
-    {{/if}}
-
+{{#each this.daysInSelectedMonth as |day|}}
+    {{#each @model.skipRecordArray as |skip|}}
+      {{#if  (is-equal skip.skippedDate day.fullDate)}}
+      <DayInCalendar 
+          @jobRecords={{@model.jobRecordArray}}
+          @fullDate={{day.fullDate}}
+          @skipped={{"True"}}
+          @skippedRecord={{skip}}
+    
+          @postToDb={{this.postToDb}}
+          @deleteFromDb={{this.deleteFromDb}}
+          @moveJob={{this.moveJob}}
+          @postNewSkip={{this.postNewSkip}}
+      />
+      {{/if}}
     {{/each}}
-    {{#unless (is-present @model.skipped day.fullDate)}}
-    <Month 
-        @month={{this.month}} 
-        @year={{this.year}} 
-        @dateArray={{@model.job}}
-        @postToDb={{this.postToDb}}
+    {{#unless (is-present @model.skipRecordArray day.fullDate)}}
+    <DayInCalendar 
+        @jobRecords={{@model.jobRecordArray}}
         @fullDate={{day.fullDate}}
         @skipped={{"False"}}
         @skippedRecord={{"null"}}
+
+        @postToDb={{this.postToDb}}
         @deleteFromDb={{this.deleteFromDb}}
         @moveJob={{this.moveJob}}
         @postNewSkip={{this.postNewSkip}}

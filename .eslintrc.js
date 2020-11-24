@@ -15,7 +15,9 @@ module.exports = {
   ],
   extends: [
     'eslint:recommended',
-    'plugin:ember/recommended'
+    'plugin:ember/recommended',
+    'eslint-config-prettier',
+    'prettier'
   ],
   env: {
     browser: true
