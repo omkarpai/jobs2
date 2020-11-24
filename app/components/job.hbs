@@ -1,29 +1,25 @@
 
-<div>
-    {{input placeholder="Title of job to add" value=newJobEntry}}
-    <button {{on "click" (fn @postToDb this.dateString newJobEntry)}}>+</button> 
-</div>
- 
+{{#each @dateArray as |job|}}
 
+    {{#if (is-equal job.startOn @fullDate)}}
+        {{#if job.isDeleted}}
+        <div></div>
+        {{else}}
+        <div class="job">
 
-{{#each jobsForThisDay as |job|}}
-{{#if job.jobRecord.isDeleted}}
-<div></div>
-{{else}}
-<div class="job">
-
-    <div class="jobTitle">{{job.jobTitle}}</div>
-    
-    <div class = "jobControls">
-        <button {{on "click" (fn @moveJob job.jobRecord "0" 1)}}> &larr;</button>
-        
-        <button {{on "click" (fn @deleteFromDb job.jobRecord)}}>Del</button>
-    
-        <button {{on "click" (fn @moveJob job.jobRecord "1" 1)}}> &rarr; </button>
-    </div>
-    
-</div>
-{{/if}}
+            <div class="jobTitle">{{job.jobTitle}}</div>
+            
+            <div class = "jobControls">
+                <button {{on "click" (fn @moveJob job "0" 1)}}> &larr;</button>
+                
+                <button {{on "click" (fn @deleteFromDb job)}}>Del</button>
+            
+                <button {{on "click" (fn @moveJob job "1" 1)}}> &rarr; </button>
+            </div>
+            
+        </div>
+        {{/if}}
+    {{/if}}
 
     
 {{/each}}

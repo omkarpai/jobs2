@@ -13,13 +13,13 @@
 </select>
 
 <label>
- Move all jobs by n days:
+ Move all jobs forward by n days:
 
  <Input
    @type="number"
-   @value={{this.moveByN}}
+   @value={{moveByN}}
  />
-  <button type="button" {{on "click" this.moveBulk}}>Bulk move</button> 
+  <button type="button" {{on "click" (fn this.moveBulk moveByN)}}>Bulk move</button> 
 </label>
 
 
@@ -41,8 +41,6 @@ Total number of jobs in system:{{this.numberOfJobs}}
     {{#each @model.skipped as |skip|}}
     {{#if  (is-equal skip.skippedDate day.fullDate)}}
     <Month 
-        @month={{this.month}} 
-        @year={{this.year}} 
         @dateArray={{@model.job}}
         @postToDb={{this.postToDb}}
         @fullDate={{day.fullDate}}

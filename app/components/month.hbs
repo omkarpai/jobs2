@@ -22,13 +22,15 @@
         {{this.dayOfTheWeek}}
         </div>
 
+        <div>
+            {{input placeholder="Title of job to add" value=newJobEntry}}
+            <button {{on "click" (fn @postToDb @fullDate newJobEntry)}}>+</button> 
+        </div>
 
-        <Job 
-            @day={{day.dayOfMonth}} 
-            @month={{@month}} 
-            @year={{@year}} 
+
+        <Job    
+            @fullDate={{@fullDate}} 
             @dateArray={{@dateArray}} 
-            @postToDb={{@postToDb}} 
             @deleteFromDb={{@deleteFromDb}}
             @moveJob={{@moveJob}}
         >
